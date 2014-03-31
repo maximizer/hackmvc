@@ -1,7 +1,12 @@
 <?hh
 /**
+ * Hack MVC
+ *
  * Router 
+ *
+ * @author Patrick Mizer
  */
+
 class Router
 {
     private Map<string, Route> $routeMap;
@@ -10,7 +15,7 @@ class Router
         return Map::fromArray($_SERVER);
     } 
     
-    private function getControllerAction() : Map<string, string> {
+    private function getDefaultRoute() : Route {
         
         $pathInfo = $this->getServerMap()->get("PATH_INFO");
         $pathParts = explode("/", $pathInfo);
@@ -22,12 +27,10 @@ class Router
             $finalParts[] = $part;
         }
         
-        $controllerAction = new Map<string, string>();
-        
-        $controllerAction['controller'] = isset($finalParts[0]) ? ucfirst($finalParts[0]) : 'index';
-        $controllerAction['action'] = isset($finalParts[1]) ? $finalParts[1] : 'index';
-        
-        return $controllerAction;
+        $controller = isset($finalParts[0]) ? ucfirst($finalParts[0]) : 'Index';
+        $action = isset($finalParts[1]) ? $finalParts[1] : 'index';
+
+        return new Route($controller, $action);
     }
     
     public function registerRoute(string $pattern, Route $route) : void {
@@ -35,12 +38,19 @@ class Router
     }
     
     public function dispatch() : void {
-        
-        require __DIR__ . '/../controllers/' . $this->getControllerAction()->get('controller') . ".hh"; 
-        $controllerName = $this->getControllerAction()->get('controller');
+
+        /* First check to see if we have a custom route */
+        if($this->routeMap[$this->getServerMap()->get("PATH_INFO")]) {
+            $route = $this->routeMap[$this->getServerMap()->get("PATH_INFO")];
+        } else {
+            $route = $this->getDefaultRoute();
+        }
+
+        $controllerName = $route->getController();
+        require __DIR__ . '/../controllers/' . $controllerName . ".hh"; 
         $controller = new $controllerName();
-        $actionName = $this->getControllerAction()->get('action');
+
+        $actionName = $route->getAction() . "Action";
         $controller->$actionName();
     }
-    
 }

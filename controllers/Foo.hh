@@ -1,8 +1,12 @@
 <?hh
-
+/**
+ * Hack MVC
+ *
+ * @author Patrick Mizer
+ */
 class Foo extends Controller
 {
-    public function index() : void {
+    public function indexAction() : void {
         $data = new Map<string, mixed>();
         $data["foo"] = $this->GETParams()->get("foo");
 

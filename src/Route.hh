@@ -1,5 +1,13 @@
 <?hh
-
+/**
+ * Hack MVC
+ *
+ * This is a route.  It's a URL pattern that maps to a controller and an action.
+ *
+ * i.e., 
+ *
+ * @author Patrick Mizer
+ */
 class Route
 {
     private string $controller;
