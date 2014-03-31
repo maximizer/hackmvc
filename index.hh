@@ -9,8 +9,4 @@ $get = $c->GETParams();
 $router = new Router();
 $router->registerRoute("/foo", new Route("Foo.php", "index"));
 
-$data = new Map<string, mixed>();
-$data->set("foo", $get->get("foo"));
-
-$c->renderView('index/index.tpl.hh', $data);
-
+$router->dispatch();
